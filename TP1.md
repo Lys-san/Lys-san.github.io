@@ -1,0 +1,115 @@
+---
+title: TP1
+layout: default
+filename: TP1.md
+---
+
+# Rappel
+
+Contrairement au Python auquel vous avez largement eu le temps de vous habituer, le C est un langage **compilé**, non *interprété*.\
+Cela signifie, entre autres, que pour voir le résultat d'un programme ``mon_programme.c``, il faudra le compiler via la commande ``gcc`` (RTFM !) afin de générer un fichier *executable*.\
+Cet executable traduit votre code C en langage machine afin qu'il puisse être directement compréhensible pour un CPU. Pour l'exécuter, on utilisera la commande ``./mon_programme``
+
+# Exercice 1
+
+**Exemple 1** : équivalent d'un print Python en C. On développe chaque ligne en précisant son utilité :
+
+```c
+/* 1 : on inclue la librairie standard pour pouvoir utiliser la fonction printf. Le symbole '#' indique que la ligne va être gérée par le pré-processeur AVANT la compilation.*/
+#include <stdio.h>
+
+/* 2 : on définit la fonction principale "main". Toujours nommée ainsi, elle indique où se trouve le programme principal à exécuter. Elle retourne un int et ne prend aucun paramètre.*/
+int main () { 
+  /* 3 : On appelle la fonction printf (définie dans stdio.h) pour afficher notre message.*/
+  printf("Mon premier programme en C affiche cette phrase.\n");
+
+  /* 4 : On termine la fonction en retournant 0 pour indiquer que le programme s'est terminé correctement.*/
+  return 0;
+}
+```
+
+*Remarque : Le `f` de `printf` veut fire 'formatted data printing' : on va par la suite pouvoir formatter, les variables que l'on affiche, c'est-à-dire leur spécifier un format.*
+
+**Exemple 2** : On remarque l'absence du ``\n`` dans le printf, on n'inclue donc pas de retour à la ligne dans notre message.
+
+*Remarque : Il existe plusieurs symboles pour indiquer un retour à la ligne :*
+
+- `\r` (retour chariot) : on déplace le curseur au début de la ligne courante
+- `\n` (saut de ligne) : on déplace le curseur d'une ligne  vers le bas. Dans les environnement Unix, on réinitialise également la position du curseur en début de ligne.
+- `\r\n` (retour à la ligne) : sur certains système d'exploitation, on a besoin d'une combinaison des deux symboles pour faire un retour à la ligne.
+
+**Exemple 3** : Le programme ne compile pas !\
+La compilation peut générer deux types de messages : les messages d'erreurs et les warnings. Les erreurs indiquent que votre programme n'est pas compréhensible et empêchent sa compilation. Les warnings, quant à eux, sont des avertissement concernant la manière dont votre programme est fait. Ils ne bloquent pas compilation, mais sont révélateurs d'un code faillible...
+
+Identifions les différents messages obtenus : 
+
+![alt text](image.png)
+
+Chaque message commence par la syntaxe suivante :
+**filename:line:col**.\
+ Par exemple, le premier message indique une erreur située à la troisième ligne, troisième colonne du fichier exemple3.c. En général, chaque message est accompagné d'une note pour aider à comprendre le problème.\
+Ici, la variable `i` est utilisée sans qu'elle aie été déclarée.\
+Le C est un langage typé : on a besoin de spécifier le type d'une variable pour pouvoir l'utiliser. Ainsi, si on corrige en rajoutant `int` (pour *integer*), le compilateur sait que `i` représente un entier, et n'affiche plus de message d'erreur.
+
+**Remarque** : un bon programme est un programme sans warnings ! L'option `-Wall` (pour "Warnings all") de gcc que l'on vous demande d'utiliser permet de mettre en avant ces erreurs, et est une convention pour tout bon programmeur. Si vous voulez aller encore plus loin, l'option `-Werror` permet de transformer tous les warnings en erreurs.
+
+**Exemple 4** : *Remarque : Si comme moi vous compilez avec l'option `-ansi`, c'est à dire que vous compilez avec la norme ANSI qui définit des règles syntaxiques strictes du langage C, vous aurez un message d'erreur pour les commentaires `//` qui ne sont pas permis en ISO C90.\
+Pour ce cours, on vous impose pas de compiler avec -ansi, vous pouvez soit corriger l'erreur en remplaçant les `//...` par des `/*...*/`, soit retirer le flag -ansi lors de la compilation. L'avantage du -ansi est d'être sûr d'avoir un code que vous pourrez compiler partout sans erreur.*
+
+Ici, le programme met en avant la nouvelle fonction `scanf` pour récupérer la valeur de la variable `i` et on l'affiche de manière formatée via la fonction `printf` : `%d` signifie qu'on attend un entier décimal signé (qui peut être soit positif soit négatif).
+
+**Exemple 5** : Même principe de l'exemple 4.
+
+**Exemple 6** : Déroulons les étapes de l'algorithme :
+
+```c
+int main () {
+  /* initialisation */  
+  int a = 2, b= 3;
+  printf("a = %d et b= %d\n",a,b);
+  /* b = a <=> b = 2*/
+  b=a;
+  /* a = b <=> a = 2 (b a été modifié !)*/
+  a=b;
+  printf("a = %d et b= %d\n",a,b);
+  return 0;
+}
+```
+
+**Exemple 7** : 
+
+```c
+int main () {
+  int a = 2, b= 3;
+  /* on déclare une variable temporaire */
+  int tmp;
+  printf("a = %d et b= %d\n",a,b);
+  /* on stocke la valeur initiale de b dans tmp (tmp = 3) */
+  tmp = b;
+  /* b = a <=> b = 2*/
+  b=a;
+  /* a = tmp <=> a = 3 (tmp n'a pas bougé)*/
+  a=tmp;
+  printf("a = %d et b= %d\n",a,b);
+  return 0;
+}
+```
+
+**Exemple 8** : Construction et appel d'une fonction C. Tout comme la fonction `main`, on spécifie le retour de la fonction ainsi que ses arguments.\
+Lorsqu'on passe dans une fonction, toutes les variables utilisées à l'intérieur restent **locales** à cette dernière. Concrètement, le `x` de la fonction `f` est différent du `x` de la fonction main. On pourrait parler de *variable libre (muette)* et de *variable liée (parlante)* : le `x` de la fonction désigne n'importe quel `x`, et aurait pu s'appeler autrement sans altérer le comportement du programme (il est "muet") tandis que celui de la fonction `main` désigne l'entier 3 (il est "parlant").\
+Dans la fonction `f`, rien n'est retourné (*void*). La valeur de la variable `x` à l'intérieur de `main` n'est jamais changée.
+
+# Exercice 2
+
+Pour toute question concernant l'utilisation d'une fonction en C, il est important d'avoir la [documentation](https://en.cppreference.com/w/c) à portée de main.
+
+![alt text](cpp_reference.png)
+![alt text](image-1.png)
+
+Elle comprend également souvent des exemples d'utilisation de ces dernières.
+
+Pour la partie mathématique, utilisez votre cerveau !
+
+# Exercice 3
+
+Maintenant que la partie prog est maitrisée, on passe à un peu plus d'algo :) L'essentiel pour résoudre ce problème est [ici](https://fr.wikipedia.org/wiki/Mois). On cherche à coder un algorithme clair que vous pourrez expliquer à n'importe qui et à n'importe quel niveau (attention, on parle bien d'algorithme et non de code !).
