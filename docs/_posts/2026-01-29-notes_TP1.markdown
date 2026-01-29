@@ -2,7 +2,7 @@
 layout: post
 title:  "TP1"
 date:   2026-01-29 11:32:11 +0100
-categories: AP2
+categories: jekyll update
 ---
 
 # Rappel
